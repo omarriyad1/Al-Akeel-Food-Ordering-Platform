@@ -17,24 +17,12 @@ public class Receipt {
 	private int ID;
 	private double totalrecieptvalue;
 	
-	/*@OneToOne
-	@JoinColumn(name = "receipt", unique = true, updatable = false)
-	private Orders order;
-	*/
-	
 	private String restaurantname="AlAkeel Food Servives";
-	
 	
 	private String date;
 
 	
-	/*public Orders getOrder() {
-		return order;
-	}
-	public void setOrder(Orders order) {
-		this.order = order;
-	}
-	*/
+	
 	public int getID() {
 		return ID;
 	}

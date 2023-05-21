@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-deployment-structure>
+    <deployment>
+        <exclusions>
+           <module name="org.jboss.resteasy.resteasy-jackson-provider"/>
+        </exclusions>
+        <dependencies>
+            <module name="org.jboss.resteasy.resteasy-jackson2-provider" services="import"/>
+        </dependencies>
+    </deployment>
+    <security-constraint>
+    <web-resource-collection>
+         <web-resource-name>All resources</web-resource-name>
+         <url-pattern>/*</url-pattern>1
+     </web-resource-collection>
+     <auth-constraint>
+            <role-name>Customer,RestOwner,Runner</role-name>2
+     </auth-constraint>
+   </security-constraint>
+   <login-config>
+      <auth-method>BASIC</auth-method>3
+      <realm-name>basicRealm</realm-name>4
+   </login-config>
+    
+</jboss-deployment-structure>
