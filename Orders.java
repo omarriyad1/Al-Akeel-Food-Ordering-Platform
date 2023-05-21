@@ -66,10 +66,15 @@ public class Orders {
 	public OrderStatus getStatus() {
 		return status;
 	}
-	public void setStatus(OrderStatus status) {
+	public void setStatus() {
 		this.status = status;
 	}
-	
+	public void setDelivered() {
+		this.status = OrderStatus.DELIVERED;
+	}
+	public void setCanceled() {
+		this.status = OrderStatus.CANCELED;
+	}
 	public List<Meal> getMeals() {
 		return meals;
 	}

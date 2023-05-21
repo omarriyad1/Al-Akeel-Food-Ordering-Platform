@@ -17,7 +17,21 @@ public class Runner {
 	private String name;
 	private double deliveryFees;
 	private boolean available=true;
+	private int NumOfDeliverys=0;	
+	private boolean Delivered=false;
 	
+	public boolean isDelivered() {
+		return Delivered;
+	}
+	public void setDelivered(boolean delivered) {
+		this.Delivered = delivered;
+	}
+	public int getCounter() {
+		return NumOfDeliverys/2;
+	}
+	public void setCounter(int NumOfDeliverys) {
+		this.NumOfDeliverys = NumOfDeliverys;
+	}
 	public int getID() {
 		return ID;
 	}
@@ -31,6 +45,7 @@ public class Runner {
 		this.name = name;
 	}
 	public double getDeliveryFees() {
+		NumOfDeliverys++;
 		return deliveryFees;
 	}
 	public void setDeliveryFees(double deliveryFees) {
@@ -40,7 +55,7 @@ public class Runner {
 		return available;
 	}
 	public void setAvailable(boolean available) {
-		available = available;
+		this.available = available;
 	}
 	
 }
