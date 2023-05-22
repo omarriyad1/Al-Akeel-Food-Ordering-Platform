@@ -18,14 +18,9 @@ public class Runner {
 	private double deliveryFees;
 	private boolean available=true;
 	private int NumOfDeliverys=0;	
-	private boolean Delivered=false;
 	
-	public boolean isDelivered() {
-		return Delivered;
-	}
-	public void setDelivered(boolean delivered) {
-		this.Delivered = delivered;
-	}
+	
+	
 	public int getCounter() {
 		return NumOfDeliverys/2;
 	}

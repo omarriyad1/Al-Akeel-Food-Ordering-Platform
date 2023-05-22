@@ -18,6 +18,15 @@ public class Restaurant {
 	private String name;
 	private int ownerId;
 	private int numberOfCompletedOrders=0;
+	private int numberOfCancelledOrders=0;
+	public int getNumberOfCancelledOrders() {
+		return numberOfCancelledOrders;
+	}
+
+	public void setNumberOfCancelledOrders() {
+		this.numberOfCancelledOrders ++;
+	}
+
 	private double totalEarns=0;
 	
 	public int getNumberOfCompletedOrders() {
