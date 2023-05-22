@@ -21,13 +21,12 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-
+import java.security.*;
 
 
 @Stateless
 @Path("/")
 @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
-@PermitAll
 public class AlAkeelService {
 	@PersistenceContext
     private EntityManager EM;
@@ -37,8 +36,8 @@ public class AlAkeelService {
 	  @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
 	  @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
 	  @Path("/User")
-	  @RolesAllowed("customer")
-	public Customer User(Customer Cal) {
+	  @PermitAll
+	public User User(User Cal) {
 			
 			EM.persist(Cal);
 			return Cal;
@@ -48,6 +47,7 @@ public class AlAkeelService {
 	  @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
 	  @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
 	  @Path("/Runner")
+	  @PermitAll
 	public Runner Runner(Runner Cal) {
 			
 			EM.persist(Cal);
@@ -58,7 +58,7 @@ public class AlAkeelService {
 	  @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
 	  @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
 	  @Path("/RestOwner")
-	  //@RolesAllowed("restaurantOwner")
+	  @RolesAllowed("restaurantOwner")
 
 	public RestOwner CreateRestaurantOwner(RestOwner Cal) {
 			EM.persist(Cal);
@@ -71,6 +71,7 @@ public class AlAkeelService {
 	  @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
 	  @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
 	  @Path("/Meal")
+	  //@RolesAllowed("restaurantOwner")
 	public Meal CreateMeal(Meal Cal) {
 			
 			EM.persist(Cal);
@@ -145,64 +146,17 @@ public class AlAkeelService {
 		  	MyOrder.setTotalPrice(TotalPrice);
 		  	MyOrder.setRestaurantId(RID);
 		  	MyOrder.setRunner(R);
-		  
-			
 			Orders MyOrder1=getReceipt(MyOrder);
+			
+			
 			EM.persist(MyOrder1);
-			
-			Query query4 = EM.createQuery("UPDATE Restaurant r SET r.totalEarns = r.totalEarns + :orderAmount WHERE r.ID = :restaurantId");
-			query4.setParameter("orderAmount", TotalPrice);
-			query4.setParameter("restaurantId", MyOrder.getRestaurantId());
-			
-			
-			
+		
 			type2 ty=new type2(MyOrder1.getReceipt(),MyOrder1.getMeals());
 			return ty ;
 		}
 	  
-	  
-	 /* public void RestaurantSatistics()
-	  {
-		  	List<Restaurant>Res=new ArrayList<>();
-		  	List<Restaurant>Res2=new ArrayList<>();
-		  	Query query2=EM.createQuery("SELECT r from Restaurant r ");
-		    Res= query2.getResultList(); 
-		    
-		  
-		  
-		  
-		  for (Restaurant i : Res) 
-		  {
-			  for (Meal j : M)
-			  {
-				  if (j.getRestaurantId()==i.getID())
-				  {
-					  i.setTotalEarns(j.getPrice());
-					  
-				  }
-			  }
 
-		  }
-		  
-		  for (Restaurant i : Res) 
-		  {
-			  for (Meal j : M)
-			  {
-				  if (j.getRestaurantId()==i.getID())
-				  {
-					  i.setNumberOfCompletedOrders();
-					  Res2.add(i);
-					  Res.remove(i);
-				  }
-			  }
-
-		  }
-		  return Res2;
-		  
-	  
-	  }*/
-	  
-	  
+	 
 	  //DONE
 	  @POST
 	  @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
@@ -314,19 +268,21 @@ public class AlAkeelService {
 		  
 		  Query query=EM.createQuery("SELECT e from Orders e where e.ID =:sal");
 		  query.setParameter("sal", id);
-		  List<Orders> R=query.getResultList(); 
+		  List<Orders> R=query.getResultList();
+		  
+		  
 		  
 		  for (Orders i:R)
 		  {
 			  if (i.getID()==id)
 			  {
 				  i.setCanceled();
-				  EM.remove(i);
+				  EM.merge(i);
 
 				  break;
 			  }
 		  }
-		 String Message="Sucessfully Deleted Order with ID :"+id+" Menu";
+		 String Message="Sucessfully Cancelled Order with ID :"+id+" Menu";
 		 return Message;
 		 	 
 			
@@ -432,15 +388,28 @@ public class AlAkeelService {
 			
 	  }
 	//Done
+	  @SuppressWarnings("unchecked")
 	  @GET
 	  @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
 	  @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
 	  @Path("/ListAllOrdersForRest/{id}")
-	public Object ListAllOrdersForRestaurantById(@PathParam("id")int id  ) {
+	public List<type2> ListAllOrdersForRestaurantById(@PathParam("id")int id  ) {
+		  List<type2>Orders=new ArrayList<>();
+		  List<Orders>Orderss=new ArrayList<>();
 		  
 		  Query query=EM.createQuery("SELECT e from Orders e where e.restaurantId = :sal");
 		  query.setParameter("sal", id);
-		  return query.getResultList(); 
+		  Orderss=query.getResultList();
+		  
+		  for (Orders i:Orderss)
+		  {
+			  type2 t=new type2(i.getReceipt(),i.getMeals());
+			  Orders.add(t);
+		  }
+		  
+		  return Orders;
+		  
+		  
 		  
 		  
 		  	
@@ -474,10 +443,8 @@ public class AlAkeelService {
 				 }
 			 }
 		  
-		 /* Query query2 = EM.createQuery("UPDATE Runner r SET r.available = :completed WHERE r.ID = :runnerId");
-		  query2.setParameter("runnerId", RID);
-		  query2.setParameter("completed", true);*/
-		//Assign Free Order to a runner 
+		 
+		//Assign Runner as available
 		  	List<Runner>Run=new ArrayList<>();
 		  	Runner Ru=new Runner ();
 		  	Query query2=EM.createQuery("SELECT r from Runner r where r.ID = :RID");
@@ -496,12 +463,7 @@ public class AlAkeelService {
 				 }
 			 }
 		  
-		  
-		  
-		  
-		  /*Query query4 = EM.createQuery("UPDATE Restaurant r SET r.numberOfCompletedOrders = r.numberOfCompletedOrders + 1 WHERE r.ID = :runnerId");
-		  query4.setParameter("runnerId", id);
-		  */
+		  //Assign earns and delivered ordered for a restaurant
 		    List<Restaurant>Rest=new ArrayList<>();
 		  	Restaurant Rs=new Restaurant ();
 		  	Query query4=EM.createQuery("SELECT r from Restaurant r where r.ID = :id");
