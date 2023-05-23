@@ -37,7 +37,7 @@ public class AlAkeelService {
 	  @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
 	  @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
 	  @Path("/SignUp")
-	  //@PermitAll
+	  @PermitAll
 	public User SignUp(User Cal) {
 		  
 			
@@ -48,7 +48,7 @@ public class AlAkeelService {
 	  @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
 	  @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
 	  @Path("/SignIn")
-	  //@PermitAll
+	  @RolesAllowed("customer")
 	public String SignIn(Credentials Cal) {
 		  List<User>Users=new ArrayList<>();
 		  Query query=EM.createQuery("SELECT e from User e where e.ID = :id");
@@ -93,7 +93,7 @@ public class AlAkeelService {
 	  @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
 	  @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
 	  @Path("/Meal")
-	  //@RolesAllowed("restaurantOwner")
+	  @RolesAllowed("restaurantOwner")
 	public Meal CreateMeal(Meal Cal) {
 			String Role="restaurantOwner";
 			List<Restaurant>Restaurants=new ArrayList<>();
@@ -424,12 +424,14 @@ return null;
 		  if (CurrentUser.getRole().equals(Role))
 		  {
 			  List<Orders> R=new ArrayList<>();
-			  Query query=EM.createQuery("SELECT e from Orders e where e.ID =:sal");
+			  Query query=EM.createQuery("SELECT e from Orders e where e.ID = :sal");
 			  query.setParameter("sal", id);
 			  R=query.getResultList();
 
 			  List<Meal> OrderedMeals=new ArrayList<>();
 			  OrderedMeals=R.get(0).getMeals();
+			  
+			  
 
 			  for (Orders i:R)
 			  {
@@ -466,13 +468,13 @@ return null;
 
 		   if (CurrentUser.getRole().equals(Role))
 		   {
-			   Query query=EM.createQuery("SELECT e from Orders e where e.ID =:sal");
+			   Query query=EM.createQuery("SELECT e from Orders e where e.ID = :sal");
 			   query.setParameter("sal", id);
 			   List<Orders> R=query.getResultList();
 
 			   List<Meal> OrderedMeals=query.getResultList();
 
-			   Query query2=EM.createQuery("SELECT e from Meal e where e.ID =:sall");
+			   Query query2=EM.createQuery("SELECT e from Meal e where e.ID = :sall");
 			   query2.setParameter("sall", MID);
 			   List<Meal> AllMeals=query2.getResultList();
 
@@ -486,6 +488,7 @@ return null;
 							   OrderedMeals.add(m);
 							   i.setTotalPrice(m.getPrice());
 							   Receipt d=i.getReceipt();
+							   i.setMeals(OrderedMeals);
 							   d.setTotalrecieptvalue(i.getReceipt().getTotalrecieptvalue()+m.getPrice());
 							   i.setReceipt(d);
 							   EM.merge(i);
@@ -510,7 +513,7 @@ return null;
 	  @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
 	  @Path("/ListAllOrdersForRest/{id}")
 	//@RolesAllowed("restaurantOwner")
-	public List<Orders> ListAllOrdersForRestaurantById(@PathParam("id")int id  ) {
+	public List<type2> ListAllOrdersForRestaurantById(@PathParam("id")int id  ) {
 
 		  String Role = "restaurantOwner";
 		  if (CurrentUser.getRole().equals(Role)) {
@@ -527,7 +530,7 @@ return null;
 				  Orders.add(t);
 			  }
 
-			  return Orderss;
+			  return Orders;
 		  }
 		  return null;
 	  }

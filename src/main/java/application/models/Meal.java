@@ -16,7 +16,7 @@ public class Meal {
 	private String name;
 	private double price;
 	private int restaurantId;
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	private Orders order ;
 	
 	@ManyToOne(fetch=FetchType.LAZY)

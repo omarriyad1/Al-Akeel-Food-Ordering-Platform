@@ -23,7 +23,13 @@ public class Orders {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int ID ;
 	private int restaurantId;
-	
+	private int customerId;
+	public int getCustomerId() {
+		return customerId;
+	}
+	public void setCustomerId(int customerId) {
+		this.customerId = customerId;
+	}
 	public int getRestaurantId() {
 		return restaurantId;
 	}
